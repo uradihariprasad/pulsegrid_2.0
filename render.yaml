@@ -1,0 +1,37 @@
+# Render blueprint for PULSEGRID 2.0
+# One web service + one PostgreSQL instance, wired together automatically.
+
+databases:
+  - name: pulsegrid-db
+    databaseName: pulsegrid
+    user: pulsegrid
+    plan: starter
+
+services:
+  - type: web
+    name: pulsegrid
+    runtime: docker          # uses the repo Dockerfile
+    plan: starter            # paid tier is required for background workers
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pulsegrid-db
+          property: connectionString
+      - key: PULSEGRID_SECRET
+        generateValue: true   # Render generates a 64-char secret
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+    # Optional: user can paste their token here instead of the UI entry box
+    # - key: UPSTOX_ACCESS_TOKEN
+    #   value: "eyJ..."
+
+# Notes for the user:
+# 1. Deploy with "New → Blueprint" pointing at this repo.
+# 2. The database is created and DATABASE_URL auto-wired.
+# 3. PULSEGRID_SECRET is auto-generated (>=32 chars) for credential encryption.
+# 4. Open the service URL → enter your Upstox token in the header control.
+# 5. Free plan spins web services to sleep; keep "starter" for background workers.

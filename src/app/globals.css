@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* PULSEGRID 2.0 — reference design tokens (locked) */
+@theme {
+  --color-bg: #0a0c10;
+  --color-panel: #10141b;
+  --color-panel2: #151b25;
+  --color-border: #1e2634;
+  --color-txt: #dbe4f0;
+  --color-txt-dim: #7d8aa0;
+  --color-green: #16c784;
+  --color-red: #ea3943;
+  --color-amber: #f0b90b;
+  --color-blue: #4fa3ff;
+  --color-grey: #5a6a83;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  color: var(--color-txt);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-feature-settings: "tnum" 1;
+}
+
+/* numeric typeface for tables — registered as a real Tailwind utility */
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #20293a;
+  border-radius: 6px;
+  border: 2px solid #0a0c10;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3649;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #20293a transparent;
+}
+
+/* panel + density primitives matching the reference look */
+.pg-panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+.pg-panel-2 {
+  background: var(--color-panel2);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+.pg-th {
+  @apply text-left text-[10px] font-medium uppercase tracking-wider text-txt-dim px-2.5 py-1.5 border-b border-border whitespace-nowrap;
+}
+.pg-td {
+  @apply px-2.5 py-1.5 text-[11.5px] tnum whitespace-nowrap border-b border-border/60;
+}
+.pg-row-hover:hover {
+  background: #161d29;
+}
+
+@keyframes pg-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.pg-pulse {
+  animation: pg-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pg-flash-green {
+  0% { color: var(--color-green); }
+  100% { color: inherit; }
+}
+@keyframes pg-flash-red {
+  0% { color: var(--color-red); }
+  100% { color: inherit; }
+}
+.flash-up { animation: pg-flash-green 0.7s ease-out; }
+.flash-down { animation: pg-flash-red 0.7s ease-out; }
+
+/* chart watermarks */
+.pg-chip {
+  @apply inline-flex items-center gap-1 rounded-md border border-border bg-panel2 px-1.5 py-0.5 text-[10px] font-medium;
+}
+
+/* ---------------------------------------------------- mobile ergonomics */
+/* momentum scrolling for every horizontally scrollable table/panel */
+.overflow-x-auto,
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+  /* iOS zooms on focus when inputs render below 16px — keep the dense look
+     by scaling the box down while the computed font-size stays 16px. */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .pg-th {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .pg-td {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* comfortable tap targets on touch pointers without changing desktop density */
+@media (pointer: coarse) {
+  button,
+  a[href],
+  select {
+    touch-action: manipulation;
+  }
+}
